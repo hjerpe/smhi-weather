@@ -1,6 +1,8 @@
-click
+click==8.1.7
 mypy
 notebook
+pandas==2.1.4
 pre-commit
 python-dotenv
-pyyaml
+pyyaml==6.0.1
+requests==2.31.0
