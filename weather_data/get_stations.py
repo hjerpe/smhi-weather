@@ -1,17 +1,19 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
+import pandas as pd
 import requests
 
 
-def get_stations() -> Optional[List[str]]:
-    """Fetches and returns a list of station names from the API.
+def get_stations(parameter_id: str) -> Optional[pd.DataFrame]:
+    """Fetches and returns a DataFrame of station details from the API based on the given parameter.
+
+    Args:
+        parameter_id (str): The ID of the parameter to fetch the stations for.
 
     Returns:
-        Optional[List[str]]: A list of station names or None if an error occurs.
+        Optional[pd.DataFrame]: A DataFrame of station details or None if an error occurs.
     """
-    url: str = (
-        "https://opendata-download-metobs.smhi.se/api/version/latest/parameter/1.json"
-    )
+    url: str = f"https://opendata-download-metobs.smhi.se/api/version/latest/parameter/{parameter_id}.json"
 
     try:
         response: requests.Response = requests.get(url)
@@ -19,9 +21,23 @@ def get_stations() -> Optional[List[str]]:
 
         data: dict = response.json()
         stations: list = data.get("station", [])
-        station_names: List[str] = ["; ".join(station) for station in stations]
 
-        return station_names
+        # Initialize an empty list to hold station data
+        station_data: List[Dict[str, str]] = []
+
+        # Loop through each station and gather details
+        for station in stations:
+            # Extract details from each station entry
+            details = {key: str(value) for key, value in station.items()}
+            station_data.append(details)
+
+        # Create a DataFrame from the list of station data
+        df: pd.DataFrame = pd.DataFrame(station_data)
+
+        # Save the DataFrame to a CSV file called 'stations.csv'
+        df.to_csv("stations.csv", index=False)
+
+        return df
 
     except requests.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
@@ -31,8 +47,10 @@ def get_stations() -> Optional[List[str]]:
 
 
 if __name__ == "__main__":
-    station_names: Optional[List[str]] = get_stations()
-    if station_names:
-        print("Stations: ")
-        for name in station_names:
-            print(name)
+    parameter_id = "1"  # Example parameter ID, replace with actual parameter ID
+    df: Optional[pd.DataFrame] = get_stations(parameter_id)
+    if df is not None:
+        df.to_csv("weather_data/data/stations.csv", index=False, sep=";")
+        print("Stations Data:")
+        print(df.head())  # Print the first few rows of the DataFrame
+        print(df.columns)

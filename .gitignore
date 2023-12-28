@@ -135,3 +135,6 @@ dbt/logs
 
 # Environment
 venvs/
+
+# Data
+*.csv

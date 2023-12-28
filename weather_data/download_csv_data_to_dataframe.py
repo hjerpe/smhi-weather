@@ -3,6 +3,10 @@ from typing import Optional
 
 import pandas as pd
 import requests
+from parameters import parameters
+
+# Get parameter for lufttemperatur measured once per hour
+TEMPERATURE = parameters["1"]
 
 
 def download_csv_data_to_dataframe(
@@ -49,8 +53,19 @@ def download_csv_data_to_dataframe(
 
 
 if __name__ == "__main__":
-    parameter = "1"
-    station = "159880"
-    df = download_csv_data_to_dataframe(parameter, station)
-    if df is not None:
-        print(df)  # Print the first few rows of the DataFrame
+    parameter = TEMPERATURE.id
+    stations = pd.read_csv("weather_data/data/stations.csv", sep=";")
+    cols = ["key", "name"]
+    # Loop over each name and key
+    stations = stations[cols].drop_duplicates().head(10)
+    dfs = []
+    for index, row in stations.iterrows():
+        station = row["key"]
+        name = row["name"]
+        df = download_csv_data_to_dataframe(parameter, station)
+        if df is not None:
+            dfs.append(df)
+            # df.to_csv(f'weather_data/data/{name}.csv', index=False, sep=";")
+    combined_df = pd.concat(dfs)
+    # Write temperature to csv
+    combined_df.to_csv("weather_data/data/temperature.csv", index=False, sep=",")
