@@ -1,0 +1,6 @@
+click
+mypy
+notebook
+pre-commit
+python-dotenv
+pyyaml

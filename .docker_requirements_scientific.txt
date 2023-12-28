@@ -1,0 +1,12 @@
+click
+mypy
+notebook
+numpy
+pandas
+pre-commit
+python-dotenv
+pyyaml
+scikit-learn
+statsmodels
+torch
+transformers
