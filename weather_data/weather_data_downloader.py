@@ -97,4 +97,4 @@ class WeatherDataDownloader:
                 df = df[cols]
                 dfs.append(df)
         combined_df = pd.concat(dfs)
-        combined_df.to_csv("weather_data/data/temperature.csv", index=False, sep=",")
+        combined_df.to_csv("weather_data/data/temperature.csv", index=False, sep=";")
