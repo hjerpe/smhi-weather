@@ -8,7 +8,7 @@ import requests
 def download_csv_data_to_dataframe(
     parameter: str, station: str
 ) -> Optional[pd.DataFrame]:
-    """D
+    """Downloads meteorological data as CSV for a specific station with corrected-archive period.
 
     Args:
         parameter (str): The parameter value.
