@@ -2,10 +2,14 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 import requests
+from dotenv import find_dotenv, load_dotenv
+from municipality_matcher import MunicipalityMatcher
+
+_ = load_dotenv(find_dotenv())
 
 
 def get_stations(parameter_id: str) -> Optional[pd.DataFrame]:
-    """Fetches and returns a DataFrame of station details from the API based on the given parameter.
+    """Fetches and returns a DataFraggme of station details from the API based on the given parameter.
 
     Args:
         parameter_id (str): The ID of the parameter to fetch the stations for.
@@ -31,9 +35,17 @@ def get_stations(parameter_id: str) -> Optional[pd.DataFrame]:
             details = {key: str(value) for key, value in station.items()}
             station_data.append(details)
 
+        station_data = station_data
         # Create a DataFrame from the list of station data
         df: pd.DataFrame = pd.DataFrame(station_data)
-
+        matcher = MunicipalityMatcher()
+        # Add a column for the municipality
+        df["municipality"] = df.apply(
+            lambda row: matcher.find_municipality(
+                float(row["latitude"]), float(row["longitude"])
+            ),
+            axis=1,
+        )
         # Save the DataFrame to a CSV file called 'stations.csv'
         df.to_csv("stations.csv", index=False)
 
@@ -53,4 +65,3 @@ if __name__ == "__main__":
         df.to_csv("weather_data/data/stations.csv", index=False, sep=";")
         print("Stations Data:")
         print(df.head())  # Print the first few rows of the DataFrame
-        print(df.columns)

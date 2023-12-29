@@ -1,6 +1,7 @@
 click==8.1.7
 mypy
 notebook
+opencage==2.4.0
 pandas==2.1.4
 pre-commit
 python-dotenv
