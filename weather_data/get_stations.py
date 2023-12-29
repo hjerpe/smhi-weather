@@ -5,8 +5,6 @@ import requests
 from dotenv import find_dotenv, load_dotenv
 from municipality_matcher import MunicipalityMatcher
 
-_ = load_dotenv(find_dotenv())
-
 
 def get_stations(parameter_id: str) -> Optional[pd.DataFrame]:
     """Fetches and returns a DataFraggme of station details from the API based on the given parameter.
@@ -61,6 +59,7 @@ def get_stations(parameter_id: str) -> Optional[pd.DataFrame]:
 if __name__ == "__main__":
     parameter_id = "1"  # Example parameter ID, replace with actual parameter ID
     df: Optional[pd.DataFrame] = get_stations(parameter_id)
+    _ = load_dotenv(find_dotenv())
     if df is not None:
         df.to_csv("weather_data/data/stations.csv", index=False, sep=";")
         print("Stations Data:")

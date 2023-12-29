@@ -19,7 +19,8 @@ class MunicipalityMatcher:
     to the nearest municipality.
 
     Attributes:
-        municipalities: A dictionary to hold municipality data.
+        municipalities (List[str]): A list of Swedish municipalities.
+        geocoder (OpenCageGeocode): An instance of the OpenCageGeocode client.
     """
 
     def __init__(self) -> None:
