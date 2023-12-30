@@ -1,1 +1,2 @@
-MY_VARIABLE: "my-value"
+base_url: "https://opendata-download-metobs.smhi.se/api/version/1.0"
+default_period: "corrected-archive"
