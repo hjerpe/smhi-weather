@@ -11,7 +11,7 @@ from parameters import parameters
 
 # Load the logging configuration
 logging.config.fileConfig(
-    fname="/workspaces/smhi-weater/logging.conf", disable_existing_loggers=False
+    fname="/workspaces/smhi-weather/logging.conf", disable_existing_loggers=False
 )
 print(os.getcwd())
 
@@ -97,19 +97,21 @@ class WeatherDataDownloader:
         Reads a predefined list of stations, downloads data for each, and saves the compiled data into a CSV file.
         """
         stations = pd.read_csv("weather_data/data/stations.csv", sep=";")
-        cols = ["key", "name"]
-        stations = stations[cols].drop_duplicates().head(10)
+        cols = ["key", "name", "active", "from", "to", "municipality"]
+        stations = stations[cols].drop_duplicates()
         dfs = []
         for index, row in stations.iterrows():
             station_id = row["key"]
             name = row["name"]
             df = self.download_weather_data(station_id)
             if df is not None:
-                df["station_name"] = name
                 df["station_id"] = station_id
+                df["station_active"] = row["active"]
+                df["station_municipality"] = row["municipality"]
                 cols = [
                     "station_id",
-                    "station_name",
+                    "station_active",
+                    "station_municipality",
                     "Datum",
                     "Tid (UTC)",
                     "Lufttemperatur",

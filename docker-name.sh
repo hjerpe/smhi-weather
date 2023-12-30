@@ -1,3 +1,3 @@
 #!/bin/bash
 
-image_name=smhi-weater-box:0.1
+image_name=smhi-weather-box:0.1
