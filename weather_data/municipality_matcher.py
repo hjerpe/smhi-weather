@@ -3,6 +3,7 @@ import os
 import time
 from typing import List, Optional
 
+from dotenv import find_dotenv, load_dotenv
 from opencage.geocoder import (
     InvalidInputError,
     OpenCageGeocode,
@@ -25,9 +26,11 @@ class MunicipalityMatcher:
 
     def __init__(self) -> None:
         """Initializes the MunicipalityMatcher with empty data."""
+        # Load environment variables
+        _ = load_dotenv(find_dotenv())
         self.municipalities: List[str] = []
         self.load_municipalities()
-        self.geocoder = OpenCageGeocode(os.getenv("opencage_api_key"))
+        self.geocoder = OpenCageGeocode(key=os.getenv("opencage_api_key"))
 
     def load_municipalities(self) -> None:
         """Loads municipality data from a CSV file."""

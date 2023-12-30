@@ -33,7 +33,7 @@ def get_stations(parameter_id: str) -> Optional[pd.DataFrame]:
             details = {key: str(value) for key, value in station.items()}
             station_data.append(details)
 
-        station_data = station_data
+        station_data = station_data[:2]
         # Create a DataFrame from the list of station data
         df: pd.DataFrame = pd.DataFrame(station_data)
         matcher = MunicipalityMatcher()
@@ -44,9 +44,6 @@ def get_stations(parameter_id: str) -> Optional[pd.DataFrame]:
             ),
             axis=1,
         )
-        # Save the DataFrame to a CSV file called 'stations.csv'
-        df.to_csv("stations.csv", index=False)
-
         return df
 
     except requests.HTTPError as http_err:
@@ -61,6 +58,6 @@ if __name__ == "__main__":
     df: Optional[pd.DataFrame] = get_stations(parameter_id)
     _ = load_dotenv(find_dotenv())
     if df is not None:
-        df.to_csv("weather_data/data/stations.csv", index=False, sep=";")
+        # df.to_csv("weather_data/data/stations.csv", index=False, sep=";")
         print("Stations Data:")
         print(df.head())  # Print the first few rows of the DataFrame

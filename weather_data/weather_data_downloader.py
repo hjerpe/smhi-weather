@@ -1,9 +1,22 @@
+import logging
+import logging.config
+import os
 from io import StringIO
 from typing import Optional
 
 import pandas as pd
 import requests
+import yaml
 from parameters import parameters
+
+# Load the logging configuration
+logging.config.fileConfig(
+    fname="/workspaces/smhi-weater/logging.conf", disable_existing_loggers=False
+)
+print(os.getcwd())
+
+# Get the logger specified in the file
+logger = logging.getLogger(__name__)
 
 
 class WeatherDataDownloader:
@@ -26,8 +39,10 @@ class WeatherDataDownloader:
             parameter_id (str): The ID of the parameter to fetch weather data for. Defaults to "1".
         """
         self.parameter_id = parameters[parameter_id].id
-        self.base_url = "https://opendata-download-metobs.smhi.se/api/version/1.0"
-        self.period = "corrected-archive"
+        with open("configs/config-ver.yml", "r") as ymlfile:
+            cfg = yaml.safe_load(ymlfile)
+        self.base_url = cfg["base_url"]
+        self.period = cfg["default_period"]
 
     def download_weather_data(self, station_id: str) -> Optional[pd.DataFrame]:
         """Downloads meteorological data as CSV for a specific station with corrected-archive period.
@@ -58,16 +73,23 @@ class WeatherDataDownloader:
                     "missing",
                     "Tidsutsnitt",
                 ]
+                logger.info(
+                    f"Successfully downloaded data for station ID: {station_id}"
+                )
                 return df
             else:
-                print("No data received from the API.")
+                logger.warning(
+                    f"No data received from the API for station ID: {station_id}"
+                )
                 return None
 
         except requests.HTTPError as http_err:
-            print(f"HTTP error occurred: {http_err}")
+            logger.error(f"HTTP error occurred for station ID {station_id}: {http_err}")
             return None
         except Exception as err:
-            print(f"An error occurred: {err}")
+            logger.error(
+                f"An unexpected error occurred for station ID {station_id}: {err}"
+            )
             return None
 
     def run(self):
