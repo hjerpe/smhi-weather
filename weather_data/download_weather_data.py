@@ -1,3 +1,4 @@
+from data_updater import DataUpdater
 from dotenv import find_dotenv, load_dotenv
 from parameters import parameters
 from weather_data_downloader import WeatherDataDownloader
@@ -10,4 +11,8 @@ if __name__ == "__main__":
     TEMPERATURE = parameters["1"]
     weather_data_downloader = WeatherDataDownloader(parameter_id=TEMPERATURE.id)
     parameter = TEMPERATURE.id
-    weather_data_downloader.run()
+    weather_data = weather_data_downloader.run()
+
+    # Example usage:
+    db_updater = DataUpdater("my_data.db")
+    db_updater.fetch_and_update_db(weather_data)

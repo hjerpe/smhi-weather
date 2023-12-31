@@ -1,6 +1,5 @@
 import logging
 import logging.config
-import os
 from io import StringIO
 from typing import Optional
 
@@ -13,8 +12,6 @@ from parameters import parameters
 logging.config.fileConfig(
     fname="/workspaces/smhi-weather/logging.conf", disable_existing_loggers=False
 )
-print(os.getcwd())
-
 # Get the logger specified in the file
 logger = logging.getLogger(__name__)
 
@@ -98,12 +95,13 @@ class WeatherDataDownloader:
         """
         stations = pd.read_csv("weather_data/data/stations.csv", sep=";")
         cols = ["key", "name", "active", "from", "to", "municipality"]
-        stations = stations[cols].drop_duplicates()
+        stations = stations[cols].drop_duplicates().head(3)
         dfs = []
         for index, row in stations.iterrows():
             station_id = row["key"]
             name = row["name"]
             df = self.download_weather_data(station_id)
+            # TODO: Must combine the time and date columns to get the latest date
             if df is not None:
                 df["station_id"] = station_id
                 df["station_active"] = row["active"]
@@ -121,4 +119,5 @@ class WeatherDataDownloader:
                 df = df[cols]
                 dfs.append(df)
         combined_df = pd.concat(dfs)
-        combined_df.to_csv("weather_data/data/temperature.csv", index=False, sep=";")
+        return combined_df
+        # combined_df.to_csv("weather_data/data/temperature.csv", index=False, sep=";")
