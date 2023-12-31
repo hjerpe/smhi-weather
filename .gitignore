@@ -138,3 +138,6 @@ venvs/
 
 # Data
 *.csv
+
+# Secret
+.key
