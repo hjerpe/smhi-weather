@@ -117,6 +117,7 @@ class WeatherDataDownloader:
                     "Tidsutsnitt",
                 ]
                 df = df[cols]
+                df["datetime"] = df["Datum"] + " " + df["Tid (UTC)"]
                 dfs.append(df)
         combined_df = pd.concat(dfs)
         return combined_df

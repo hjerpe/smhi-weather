@@ -20,10 +20,16 @@ class DataUpdater:
         cursor = self.conn.cursor()
         cursor.execute(
             """
+        DROP TABLE IF EXISTS data;
+            """
+        )
+        cursor.execute(
+            """
         CREATE TABLE IF NOT EXISTS data (
             station_id TEXT,
             station_active TEXT,
             station_municipality TEXT,
+            datetime TEXT,
             Datum TEXT,
             Tid_UTC TEXT,
             Lufttemperatur REAL,
@@ -42,7 +48,7 @@ class DataUpdater:
         # Get the latest date in the database for each group
         # TODO: Must combine the time and date columns to get the latest date
         query = """
-        SELECT station_id, MAX(Datum) as max_date
+        SELECT station_id, MAX(datetime) as max_date
         FROM data
         GROUP BY station_id
         """
@@ -57,7 +63,7 @@ class DataUpdater:
         # Filter out records from the new data where the date is not greater than the max date in the corresponding group
         # TODO: Must combine the time and date columns to get the latest date
         df_to_insert = df_combined[
-            (df_combined["Datum"] > df_combined["max_date"])
+            (df_combined["datetime"] > df_combined["max_date"])
             | df_combined["max_date"].isnull()
         ]
 
@@ -66,6 +72,7 @@ class DataUpdater:
             "station_id",
             "station_active",
             "station_municipality",
+            "datetime",
             "Datum",
             "Tid_UTC",
             "Lufttemperatur",
